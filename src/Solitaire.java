@@ -2,6 +2,13 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/*
+ * TODO:
+ * - stack moving between piles
+ * - getTopCard method in CardStack
+ * - getHouseOfTopCard method in CardStack
+ */
+
 public class Solitaire {
 	private enum RANK {
 		JOKER("?"),
@@ -171,5 +178,21 @@ public class Solitaire {
 				this.board.get(translator[src]).move(1, this.board.get(translator[dest]));
 			}
 		}
+		public String toString() {
+			StringBuilder result = new StringBuilder();
+			
+			result.append(this.board.get(Game.DECK).size() < 10 ? " " : "");
+			result.append(this.board.get(Game.DECK).size());
+			result.append("[" + (this.board.get(Game.DECK).size() > 0 ? "XX" : "  ") + "]");
+			result.append(" ");
+			
+			
+			return result.toString();
+		}
+	}
+	public static void main (String[] args) {
+		Solitaire self = new Solitaire();
+		Game g = self.new Game();
+		System.out.println(g);
 	}
 }
