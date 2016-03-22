@@ -63,6 +63,13 @@ public class Solitaire {
 			this.faces = new ArrayList<Boolean>();
 		}
 		public int size () { return this.cards.size(); }
+		public Card getTopCard () {
+			Card result = null;
+			if (this.cards.size() > 0) {
+				result = this.cards.get(this.cards.size()-1);
+			}
+			return result;
+		}
 		public void add (Card card, boolean faceUp) {
 			this.cards.add(card);
 			this.faces.add(faceUp);
@@ -123,6 +130,9 @@ public class Solitaire {
 				this.translator[i+1] = Game.PILE + i;
 			}
 		}
+		private CardStack getMatchingHouse(Card card) {
+			return this.board.get(Game.HOUSE + card.getSuit());
+		}
 		public void cycle () {
 			if (this.board.get(Game.DECK).size() == 0) {
 				this.board.get(Game.OPEN).flip(this.board.get(Game.OPEN).size(), this.board.get(Game.DECK));
@@ -142,10 +152,8 @@ public class Solitaire {
 					&& this.board.containsKey(translator[src])
 					&& this.board.get(translator[src]).size() > 0
 					&& (
-							//card on top of src is ACEL and corresponding house is empty
-							this.board.get(translator[src]).get(this.board.get(translator[src]).size()-1).getRank() == RANK.ACEL && this.board.get(Game.HOUSE + this.board.get(translator[src]).get(this.board.get(translator[src]).size()-1).getSuit()).size() == 0
-							   //card on top of src is one rank higher than top card of corresponding house
-							|| this.board.get(translator[src]).get(this.board.get(translator[src]).size()-1).getRank().compareTo(this.board.get(Game.HOUSE + this.board.get(translator[src]).get(this.board.get(translator[src]).size()-1).getSuit()).get(this.board.get(Game.HOUSE + this.board.get(translator[src]).get(this.board.get(translator[src]).size()-1).getSuit()).size()-1).getRank()) == 1
+							this.board.get(translator[src]).getTopCard().getRank() == RANK.ACEL && this.getMatchingHouse(this.board.get(translator[src]).getTopCard()).size() == 0
+							|| this.board.get(translator[src]).getTopCard().getRank().compareTo(this.getMatchingHouse(this.board.get(translator[src]).getTopCard()).getTopCard().getRank()) == 1
 							);
 		}
 		public void move (int src) {
@@ -163,13 +171,11 @@ public class Solitaire {
 					&& this.board.containsKey(translator[dest])
 					&& this.board.get(translator[src]).size() > 0
 					&& (
-							//card on top of src is KING and dest is empty
-							this.board.get(translator[src]).get(this.board.get(translator[src]).size()-1).getRank() == RANK.KING && this.board.get(translator[dest]).size() == 0
+							this.board.get(translator[src]).getTopCard().getRank() == RANK.KING && this.board.get(translator[dest]).size() == 0
 							|| (
-									// card on top of src is opposite color of top card on dest
-									this.board.get(translator[src]).get(this.board.get(translator[src]).size()-1).getSuit().getColor() != this.board.get(translator[dest]).get(this.board.get(translator[dest]).size()-1).getSuit().getColor()
-									   // card on top of src is one rank lower than top card on dest
-									&& this.board.get(translator[src]).get(this.board.get(translator[src]).size()-1).getRank().compareTo(this.board.get(translator[dest]).get(this.board.get(translator[dest]).size()-1).getRank()) == -1
+									this.board.get(translator[dest]).size() > 0
+									&& this.board.get(translator[src]).getTopCard().getSuit().getColor() != this.board.get(translator[dest]).getTopCard().getSuit().getColor()
+									&& this.board.get(translator[src]).getTopCard().getRank().compareTo(this.board.get(translator[dest]).getTopCard().getRank()) == -1
 									)
 							);
 		}
