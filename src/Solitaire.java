@@ -153,12 +153,15 @@ public class Solitaire {
 					&& this.board.get(translator[src]).size() > 0
 					&& (
 							this.board.get(translator[src]).getTopCard().getRank() == RANK.ACEL && this.getMatchingHouse(this.board.get(translator[src]).getTopCard()).size() == 0
-							|| this.board.get(translator[src]).getTopCard().getRank().compareTo(this.getMatchingHouse(this.board.get(translator[src]).getTopCard()).getTopCard().getRank()) == 1
+							|| (
+									this.getMatchingHouse(this.board.get(translator[src]).getTopCard()).size() > 0
+									&& this.board.get(translator[src]).getTopCard().getRank().compareTo(this.getMatchingHouse(this.board.get(translator[src]).getTopCard()).getTopCard().getRank()) == 1
+									)
 							);
 		}
 		public void move (int src) {
 			if (this.canMove(src)) {
-				this.board.get(translator[src]).move(1, this.board.get(Game.HOUSE + this.board.get(translator[src]).get(this.board.get(translator[src]).size()-1).getSuit()));
+				this.board.get(translator[src]).move(1, this.getMatchingHouse(this.board.get(translator[src]).getTopCard()));
 			}
 		}
 		//moves not involving houses
