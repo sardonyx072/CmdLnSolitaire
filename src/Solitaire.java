@@ -5,8 +5,7 @@ import java.util.HashMap;
 /*
  * TODO:
  * - stack moving between piles
- * - getTopCard method in CardStack
- * - getHouseOfTopCard method in CardStack
+ * - change translator to map and allow keybindings
  */
 
 public class Solitaire {
@@ -75,6 +74,7 @@ public class Solitaire {
 			this.faces.add(faceUp);
 		}
 		public Card get (int i) { return this.cards.get(i); }
+		public boolean isFaceUp(int i) { return this.faces.get(i); }
 		public void move (int num, CardStack dest) {
 			for (int i = 0; i < num; i++) {
 				dest.cards.add(this.cards.remove(this.cards.size()-1));
@@ -191,7 +191,30 @@ public class Solitaire {
 			result.append(this.board.get(Game.DECK).size());
 			result.append("[" + (this.board.get(Game.DECK).size() > 0 ? "XX" : "  ") + "]");
 			result.append(" ");
-			
+			result.append("[" + (this.board.get(Game.OPEN).size() > 0 ? this.board.get(Game.OPEN).getTopCard() : "  ") + "]");
+			result.append(" ");
+			result.append("    ");
+			for (SUIT s : SUIT.values()) {
+				result.append(" [" + (this.board.get(Game.HOUSE+s).size() > 0 ? this.board.get(Game.HOUSE+s).getTopCard() : "  ") + "]");
+			}
+			result.append("\r\n\r\n");
+			result.append(" ");
+			int largestPileSize = 0;
+			for (int i = 0; i < Game.NUM_PILES; i++) {
+				result.append("  " + (i < 10 ? " " : "") + i + " ");
+				largestPileSize = Math.max(largestPileSize, this.board.get(Game.PILE+i).size());
+			}
+			for (int i = 0; i < largestPileSize; i++) {
+				result.append("\r\n ");
+				for (int j = 0; j < Game.NUM_PILES; j++) {
+					if (i < this.board.get(Game.PILE+j).size()) {
+						result.append(" [" + (this.board.get(Game.PILE+j).isFaceUp(i) ? this.board.get(Game.PILE+j).get(i) : "XX") + "]");
+					}
+					else {
+						result.append("     ");
+					}
+				}
+			}
 			
 			return result.toString();
 		}
@@ -200,5 +223,8 @@ public class Solitaire {
 		Solitaire self = new Solitaire();
 		Game g = self.new Game();
 		System.out.println(g);
+		g.cycle();
+		g.move(1);
+		g.move(1,2);
 	}
 }
